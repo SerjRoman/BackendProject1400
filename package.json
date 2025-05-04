@@ -1,0 +1,33 @@
+{
+	"name": "turbo-sms-backend",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "ts-node src/server.ts",
+		"prisma:migrate": "prisma migrate dev",
+		"prisma:format": "prisma format",
+		"prisma:generate": "prisma generate"
+	},
+	"prisma": {
+		"schema": "./prisma"
+	},
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"@prisma/client": "^6.7.0",
+		"@types/cors": "^2.8.17",
+		"@types/express": "^5.0.1",
+		"@types/yup": "^0.32.0",
+		"bcryptjs": "^3.0.2",
+		"cors": "^2.8.5",
+		"express": "^5.1.0",
+		"jsonwebtoken": "^9.0.2",
+		"path": "^0.12.7",
+		"prisma": "^6.7.0",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.8.3",
+		"yup": "^1.6.1"
+	}
+}
