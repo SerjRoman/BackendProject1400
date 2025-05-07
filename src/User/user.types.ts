@@ -1,4 +1,13 @@
+import { InferType } from "yup";
 import { Prisma } from "../generated/prisma";
-export type User = Prisma.UserGetPayload<{}>
+import { UserValidation } from './user.validate'
 
-//🦀🦀🦀🦀🦀🦀ЧВК "КРАБИКИ" АТАКУЮТ 🦀🦀🦀 ОРГАНИЗАЦИЯ "ОМАРЫ" 🦞🦞🦞🦞🦞 ВОЗЬМЕМ ИНТЕРНЕТ ЗА 2-3 ДНЯ🦐🦐🦐🦐🦐🦈🦈🦈
+export type User = Prisma.UserGetPayload<{
+    omit: {
+        password: true
+    }
+}>
+export type UserWhereUnique = Prisma.UserWhereUniqueInput
+// InferType - специальный generic тип из yup, который используется для преобразования схемы yup в тип
+// Нужно передать вашу схему и перед схемой использовать typeof
+export type UserLogin = InferType<typeof UserValidation.login>
