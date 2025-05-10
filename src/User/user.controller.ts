@@ -4,7 +4,7 @@ import { UserService } from './user.service'
 export const UserController = {
     login: async function (req: Request, res: Response, next: NextFunction) {
         const data = req.body
-        const result = await UserService.login(data.email, data.password)
+        const result = await UserService.login({email: data.email,  password: data.password})
         if (result.status === 'error') {
             return next({ status: "error", message: "Could not log in!" });
         }

@@ -1,69 +1,55 @@
-import { Prisma, PrismaClient } from "../generated/prisma";
+import { PrismaErrorCodes } from "../client/client";
+import { Prisma } from "../generated/prisma";
 import { errors, IErrors } from "../tools/error.codes";
-import { Result } from '../tools/result'
-import { CreateUser, User } from "./user.types";
+import { error, Result, success } from '../tools/result'
+import { ErrorCodes } from "../types/error-codes";
+import { User, UserWhereUnique, UserWithPassword } from "./user.types";
+import { PrismaClient } from "@prisma/client";
 
-const client = new PrismaClient();
 
 export const UserRepository = {
-    createUser: async function (data: CreateUser): Promise<Result<User>> {
+    createUser: async function (data: UserWithPassword): Promise<Result<UserWithPassword>> {
         try {
-            const user = await client.user.create({
+            const user = await PrismaClient.user.create({
                 data: data
             })
-            return { status: 'success', data: user };
-        } catch (error) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code in Object.keys(errors)) {
-                    const errorKey: keyof IErrors = error.code;
-                    return { status: "error", message: errors[errorKey] };
-                }
-            }
-            return { status: "error", message: 'An unexpected error occurred' };
-        }
+			return success(user);
+        } catch (err) {
+			if (err instanceof Prisma.PrismaClientKnownRequestError) {
+				switch (err.code) {
+					case PrismaErrorCodes.UNIQUE:
+						return error(ErrorCodes.EXISTS);
+					case PrismaErrorCodes.NOT_FOUND:
+						return error(ErrorCodes.NOT_FOUND);
+					default:
+						return error(ErrorCodes.UNHANDLED);
+				}
+			}
+			return error(ErrorCodes.UNHANDLED);
+		}
     },
-    findUserById: async function (id: number): Promise<Result<User>> {
+
+    getUser: async function (where: UserWhereUnique): Promise<Result<UserWithPassword>> {
         try {
-            let user = await client.user.findUnique({
-                where: {
-                    id: id
-                }
-            })
-            if (user) {
-                return { status: 'success', data: user };
-            } else {
-                return { status: 'error', message: 'User not found' };
-            }
-        } catch (error) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code in Object.keys(errors)) {
-                    const errorKey: keyof IErrors = error.code
-                    return { status: "error", message: errors[errorKey] };
-                }
-            }
-            return { status: "error", message: 'Failed to fetch user' };
-        }
+            const user = await PrismaClient.user.findUniqueOrThrow({
+                where: where,
+				omit: {
+					password: true,
+				},
+			});
+			return success(user);
+        } catch (err) {
+			if (err instanceof Prisma.PrismaClientKnownRequestError) {
+				switch (err.code) {
+					case PrismaErrorCodes.UNIQUE:
+						return error(ErrorCodes.EXISTS);
+					case PrismaErrorCodes.NOT_FOUND:
+						return error(ErrorCodes.NOT_FOUND);
+					default:
+						return error(ErrorCodes.UNHANDLED);
+				}
+			}
+			return error(ErrorCodes.UNHANDLED);
+		}
     },
-    findUserByEmail: async function (email: string): Promise<Result<User>> {
-        try {
-            let user = await client.user.findUnique({
-                where: {
-                    email: email
-                }
-            })
-            if (user) {
-                return { status: 'success', data: user };
-            } else {
-                return { status: 'error', message: 'User not found' };
-            }
-        } catch (error) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code in Object.keys(errors)) {
-                    const errorKey: keyof IErrors = error.code
-                    return { status: "error", message: errors[errorKey] };
-                }
-            }
-            return { status: "error", message: 'Failed to fetch user' };
-        }
-    }
 }
