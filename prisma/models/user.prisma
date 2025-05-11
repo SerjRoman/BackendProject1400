@@ -6,7 +6,7 @@ model User {
   surname    String
   avatar     String
   password   String
-  lastSeenAt DateTime
+  lastSeenAt DateTime @default(now())
   ContactOf  Contact[] @relation(name: "ContactUser")
   Contacts   Contact[] @relation(name: "ContactOwner")
 }

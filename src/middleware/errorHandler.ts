@@ -27,6 +27,14 @@ export function errorHandlerMiddleware(
 			message = "Not found!";
 			httpCode = 404;
 			break;
+		case ErrorCodes.UNAUTHORIZED:
+			message = "Incorrect password or email";
+			httpCode = 401;
+			break;
+		case ErrorCodes.VALIDATION:
+			message = "Bad credentials!";
+			httpCode = 422;
+			break;
 		default:
 			message = "Internal server error!";
 			httpCode = 500;

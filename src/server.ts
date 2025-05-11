@@ -1,13 +1,25 @@
-import express, {Express} from "express"
-import path from "path";
+import express, { Express } from "express";
 import cors from "cors";
+import { UserRouter } from "./User/user.router";
+import { errorHandlerMiddleware } from "./middleware/errorHandler";
+import { config } from "dotenv";
 
-const app: Express = express(); 
-const HOST: string = 'localhost';
+config();
+
+const app: Express = express();
+const HOST: string = "localhost";
 const PORT: number = 8000;
 
-app.use(express.json())
+app.use(express.json());
 
-app.use(cors({
-    origin: ['http://localhost:3000']
-}))
+app.use(cors());
+
+app.use("/users", UserRouter);
+
+app.use(errorHandlerMiddleware);
+
+app.listen(PORT, HOST, () => {
+	console.log(`server is running at http://${HOST}:${PORT}`);
+});
+
+// При создании API, для проверки эндпоинтов используем Postman
