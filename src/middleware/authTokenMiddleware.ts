@@ -1,36 +1,38 @@
+import { verify } from "jsonwebtoken"
+import { SECRET_KEY } from "../config/config"
 import { Request, Response, NextFunction } from "express";
-import { verify } from "jsonwebtoken";
-import { SECRET_KEY } from "../tools/token";
+import { error } from "../tools/result"
+import { ErrorCodes } from "../types/error-codes";
 
-
-interface IToken{
-    iat: number
-    exp: number
-    id: number
+interface IToken {
+	iat: number;
+	exp: number;
+	id: number;
 }
 
-export function authTokenMiddleware(req: Request, res: Response, next: NextFunction) {
-    const authHeader = req.headers.authorization;
+export function authTokenMiddleware(
+	req: Request,
+	res: Response,
+	next: NextFunction
+) {
+	const authorization = req.headers.authorization;
 
-    if (!authHeader) {
-        res.json({status: 'error', message: 'authorization required'})
-        return
-    }
+	if (!authorization) {
+		res.json(error(ErrorCodes.UNAUTHORIZED));
+		return;
+	}
 
-    const [bearer, token] = authHeader.split(" ");
+	const [type, token] = authorization.split(" ");
+	if (type !== "Bearer" || !token) {
+		res.json(error(ErrorCodes.UNHANDLED));
+		return;
+	}
 
-    if (bearer !== "Bearer" || !token) {
-        res.json({status: 'error', message: 'authorization is invalid'})
-        return
-    }
-
-    try {
-        const decoded = verify(token, SECRET_KEY) as IToken
-        res.locals.userId = decoded.id
-        next();
-
-    } catch (error) {
-        console.log(error)
-        res.json({status: 'error', message: 'token is invalid'})
-    }
+	try {
+		const decodedToken = verify(token, SECRET_KEY) as IToken;
+		res.locals.userId = decodedToken.id;
+		next();
+	} catch (error) {
+		res.json(error);
+	}
 }

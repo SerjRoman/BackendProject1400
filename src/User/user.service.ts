@@ -1,58 +1,62 @@
-import { Result, success } from '../tools/result'
-import { compare, hash } from 'bcryptjs';
+import {
+	UserLogin,
+	UserRegister,
+	UserWhereUnique,
+	UserOmit,
+	UserWithoutPassword,
+} from "./user.types";
+import { UserRepository } from "./user.repository";
+import { error, Result, success } from "../tools/result";
+import { compare, hash } from "bcryptjs";
+import { ErrorCodes } from "../types/error-codes";
+import { SECRET_KEY } from "../config/config";
 import { sign } from "jsonwebtoken";
-import { SECRET_KEY } from "../tools/token";
-import { User, UserLogin, UserRegister, UserWithPassword } from './user.types';
-import { UserRepository } from './user.repository';
 
 export const UserService = {
-    login: async function (data: UserLogin): Promise<Result<string>> {
-        const result = await UserRepository.getUser({email: data.email});
+	login: async function (data: UserLogin): Promise<Result<string>> {
+		const result = await UserRepository.getUser({ email: data.email });
+		if (result.status === "error") {
+			return result;
+		}
 
-        if (result.status === 'error') {
-            return result;
-        }
+		const isMatch = await compare(data.password, result.data.password);
+		if (!isMatch) {
+			return error(ErrorCodes.UNAUTHORIZED);
+		}
+		const token = sign({ id: result.data.id }, SECRET_KEY, {
+			expiresIn: "7d",
+		});
+		return success(token);
+	},
+	register: async function (data: UserRegister): Promise<Result<string>> {
+		const resultByEmail = await UserRepository.getUser({
+			email: data.email,
+		});
+		if (resultByEmail.status === "success") {
+			return error(ErrorCodes.EXISTS);
+		}
 
-        const user = result.data;
-        const isMatch = await compare(data.password, user.password);
+		const hashedPassword = await hash(data.password, 10);
+		const hashedData = {
+			...data,
+			password: hashedPassword,
+		};
 
-        if (!isMatch) {
-            return { status: 'error', message: 'Password is incorrect!' };
-        }
+		const user = await UserRepository.createUser(hashedData);
+		if (user.status === "error") {
+			return user;
+		}
 
-        const token = sign({ id: user.id }, SECRET_KEY, { expiresIn: '1d' });
-        return success(token)
-    },
-
-    register: async function (data: UserWithPassword): Promise<Result<string>> {
-        const userResult = await UserRepository.getUser({email: data.email});
-
-        if (userResult) {
-            return { status: "error", message: "User exists!"};
-        }
-
-        const hashedPassword = await hash(data.password, 10);
-        const newUserResult = await UserRepository.createUser({
-            ...data,
-            password: hashedPassword,
-        });
-
-        if (newUserResult.status === 'error') {
-            return newUserResult
-        }
-
-        const token = sign({ id: newUserResult.data.id }, SECRET_KEY, { expiresIn: '7d' });
-        return success(token)
-    },
-
-    getUserById: async function (data: User): Promise<Result<User>> {
-        const userResult = await UserRepository.getUser({id: data.id});
-
-        if (userResult.status === 'error') {
-            return userResult;
-        }
-
-        return success(userResult.data)
-    }
-}
-
+		const token = sign({ id: user.data.id }, SECRET_KEY, {
+			expiresIn: "7d",
+		});
+		return success(token);
+	},
+	getMe: async function (id: number): Promise<Result<UserWithoutPassword>> {
+		const result = await UserRepository.getUser(
+			{ id: id },
+			{ password: true }
+		);
+		return result;
+	},
+};

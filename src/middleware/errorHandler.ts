@@ -1,14 +1,21 @@
 import { Error } from "../tools/result";
 import { Request, Response, NextFunction } from "express";
 import { ErrorCodes } from "../types/error-codes";
-
+// case - случай
 export function errorHandlerMiddleware(
 	error: Error,
 	req: Request,
 	res: Response,
 	next: NextFunction
 ) {
-    let message: string;
+	// if (error.code === ErrorCodes.EXISTS ) {
+	//     res.status(409).json(error)
+	// }
+	// if (error.code === ErrorCodes.NOT_FOUND ) {
+	//     res.status(409).json(error)
+	// }
+
+	let message: string;
 	let httpCode: number;
 
 	switch (error.code) {
@@ -19,6 +26,14 @@ export function errorHandlerMiddleware(
 		case ErrorCodes.NOT_FOUND:
 			message = "Not found!";
 			httpCode = 404;
+			break;
+		case ErrorCodes.UNAUTHORIZED:
+			message = "Incorrect password or email";
+			httpCode = 401;
+			break;
+		case ErrorCodes.VALIDATION:
+			message = "Bad credentials!";
+			httpCode = 422;
 			break;
 		default:
 			message = "Internal server error!";
