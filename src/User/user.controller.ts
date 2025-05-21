@@ -14,6 +14,7 @@ export const UserController = {
 		const result = await UserService.register(req.body);
 		if (result.status == "error") {
 			next(result);
+            return;
 		}
 		res.json(result);
 	},
