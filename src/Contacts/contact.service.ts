@@ -11,6 +11,7 @@ export const ContactService = {
 	},
 	createContact: async function (
 		data: CreateContact
+        // {localName: string, ownerId: number, contactUserId: number, avatar: string}
 	): Promise<Result<Contact>> {
 		return await ContactRepository.createContact(data);
 	},

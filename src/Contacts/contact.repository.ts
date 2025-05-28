@@ -47,9 +47,6 @@ export const ContactRepository = {
         } catch (err) {
             if (err instanceof Prisma.PrismaClientKnownRequestError) {
 				switch (err.code) {
-					case PrismaErrorCodes.NOT_FOUND:
-						return error(ErrorCodes.NOT_FOUND);
-
 					default:
 						return error(ErrorCodes.UNHANDLED);
 				}

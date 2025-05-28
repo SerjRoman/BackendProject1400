@@ -53,10 +53,14 @@ export const UserService = {
 		return success(token);
 	},
 	getMe: async function (id: number): Promise<Result<UserWithoutPassword>> {
-		const result = await UserRepository.getUser(
-			{ id: id },
+		return await UserRepository.getUser({ id: id }, { password: true });
+	},
+	getUserByUsername: async function (
+		username: string
+	): Promise<Result<UserWithoutPassword>> {
+		return await UserRepository.getUser(
+			{ username: username },
 			{ password: true }
 		);
-		return result;
 	},
 };

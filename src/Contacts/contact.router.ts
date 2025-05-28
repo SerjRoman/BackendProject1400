@@ -1,11 +1,16 @@
-import express from 'express';
-import { ContactController } from './contact.controller';
-import { validateMiddleware } from '../middleware/validate';
+import { Router } from "express";
+import { ContactController } from "./contact.controller";
+import { validateMiddleware } from "../middleware/validate";
+import { ContactValidation } from "./contact.validate";
 
-const router = express.Router()
-// TODO: Добавить валидацию для создания контакта
-router.get('/',ContactController.getAllContacts)
-router.get('/:id', ContactController.getContactById)
-router.post("/create", ContactController.createContact)
+const router = Router();
 
-export default router
+router.get("/", ContactController.getAllContacts);
+router.get("/:id", ContactController.getContactById);
+router.post(
+	"/create",
+	validateMiddleware(ContactValidation.contact),
+	ContactController.createContact
+);
+
+export { router as ContactRouter };
