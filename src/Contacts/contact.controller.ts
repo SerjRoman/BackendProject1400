@@ -4,7 +4,6 @@ import { ContactService } from "./contact.service";
 export const ContactController = {
 	getContactById: async function (req: Request, res: Response, next: NextFunction) {
         const id = req.params.id;
-        // if NaN
 		const result = await ContactService.getContactById(+id)
 		if (result.status == "error") {
 			next(result);

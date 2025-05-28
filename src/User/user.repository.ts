@@ -42,5 +42,5 @@ export const UserRepository = {
 			}
 			return error(ErrorCodes.UNHANDLED);
 		}	
-	}
+	},
 };

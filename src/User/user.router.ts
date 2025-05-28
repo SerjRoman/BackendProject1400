@@ -17,5 +17,10 @@ router.post(
 	UserController.register
 );
 
+router.get(
+	"/:username",
+	UserController.getUserByUsername
+)
+
 router.get("/me", authTokenMiddleware, UserController.getMe);
 export { router as UserRouter };

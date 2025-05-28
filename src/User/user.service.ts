@@ -59,4 +59,10 @@ export const UserService = {
 		);
 		return result;
 	},
+	getUserByUsername: async function (username: string): Promise<Result<UserWithoutPassword>> {
+		const result = await UserRepository.getUser({username},
+			{ password: true }
+		)
+		return result;
+	}
 };

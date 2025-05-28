@@ -22,4 +22,8 @@ export const UserController = {
 		const result = await UserService.getMe(res.locals.userId);
 		res.json(result);
 	},
+	getUserByUsername: async function (req: Request, res: Response, next: NextFunction) {
+		const result = await UserService.getUserByUsername(req.params.username);
+		res.json(result);
+	},
 };

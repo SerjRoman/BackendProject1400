@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import cors from "cors";
 import { UserRouter } from "./User/user.router";
+import { ContactRouter } from "./Contacts/contact.router"
 import { errorHandlerMiddleware } from "./middleware/errorHandler";
 import { config } from "dotenv";
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/users", UserRouter);
+app.use("/contact", ContactRouter)
 
 app.use(errorHandlerMiddleware);
 
