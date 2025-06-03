@@ -11,6 +11,7 @@ import { compare, hash } from "bcryptjs";
 import { ErrorCodes } from "../types/error-codes";
 import { SECRET_KEY } from "../config/config";
 import { sign } from "jsonwebtoken";
+import { uploadImage } from "../tools/upload-image";
 
 export const UserService = {
 	login: async function (data: UserLogin): Promise<Result<string>> {
@@ -36,10 +37,13 @@ export const UserService = {
 			return error(ErrorCodes.EXISTS);
 		}
 
+		const avatar = await uploadImage(data.avatar)
+
 		const hashedPassword = await hash(data.password, 10);
 		const hashedData = {
 			...data,
 			password: hashedPassword,
+			avatar: avatar.fileName,
 		};
 
 		const user = await UserRepository.createUser(hashedData);
