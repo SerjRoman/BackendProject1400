@@ -1,0 +1,8 @@
+model Chat {
+  id            Int               @id @unique @default(autoincrement())
+  messages      Message[]
+  lastMessage   Message           @relation(fields: [lastMessageId], references: [id], name: "chatLastMessage")
+  lastMessageId Int               @unique
+  participants  ChatParticipant[]
+  createdAt     DateTime          @default(now())
+}

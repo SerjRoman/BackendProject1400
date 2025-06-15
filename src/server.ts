@@ -4,10 +4,16 @@ import { UserRouter } from "./User/user.router";
 import { errorHandlerMiddleware } from "./middleware/errorHandler";
 import { config } from "dotenv";
 import { join } from "path";
+import { createServer } from "http";
+import { initSocketServer } from "./socket";
 
 config();
 
 const app: Express = express();
+const httpServer = createServer(app)
+
+initSocketServer(httpServer)
+
 const HOST: string = "localhost";
 const PORT: number = 8001;
 
@@ -21,7 +27,7 @@ app.use("/api/users", UserRouter);
 
 app.use(errorHandlerMiddleware);
 
-app.listen(PORT, HOST, () => {
+httpServer.listen(PORT, HOST, () => {
 	console.log(`server is running at http://${HOST}:${PORT}`);
 });
 
