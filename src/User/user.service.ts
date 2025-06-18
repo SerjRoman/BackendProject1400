@@ -1,8 +1,6 @@
 import {
 	UserLogin,
 	UserRegister,
-	UserWhereUnique,
-	UserOmit,
 	UserWithoutPassword,
 } from "./user.types";
 import { UserRepository } from "./user.repository";

@@ -10,3 +10,4 @@ model Message {
   chatAsLastMessage   Chat?   @relation(name: "chatLastMessage")
   chatAsLastMessageId Int
 }
+// timestamp
