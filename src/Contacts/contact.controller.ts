@@ -1,10 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import { ContactService } from "./contact.service";
+import { error } from "../tools/result";
+import { ErrorCodes } from "../types/error-codes"
 
 export const ContactController = {
 	getContactById: async function (req: Request, res: Response, next: NextFunction) {
         const id = req.params.id;
-        // if NaN
+        if (isNaN(+id)){
+			next(error(ErrorCodes.VALIDATION));
+			return;
+		}
 		const result = await ContactService.getContactById(+id)
 		if (result.status == "error") {
 			next(result);

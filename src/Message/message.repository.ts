@@ -7,7 +7,7 @@ import { Prisma } from "../generated/prisma";
 export const MessageRepository = {
     createMessage: async function (data: CreateMessage): Promise<Result<Message>> {
         try {
-            const message = PrismaClient.message.create({
+            const message = await PrismaClient.message.create({
                 data: data
             })
             return success(message)

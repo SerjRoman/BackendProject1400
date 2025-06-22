@@ -30,9 +30,7 @@ export type IJoinChatCallback = (
 	response: Result<ChatWithArgs<{ messages: true; participants: true }>>
 ) => void;
 
-export interface IChatUpdatePayload {
-	chat: Chat;
-}
+export type IChatUpdatePayload = Chat
 
 export interface IChatSocketController {
 	joinChat: (
@@ -46,6 +44,12 @@ export interface IChatSocketController {
 }
 
 export interface IChatService {
+	getChat: (
+		id: number,
+	) => Promise<Result<ChatWithArgs<{messages: true; participants: true}>>>;
+	createChat: (
+		data: CreateChat
+	) => Promise<Result<Chat>>
 	joinChat: (
 		id: number
 	) => Promise<Result<ChatWithArgs<{ messages: true; participants: true }>>>;

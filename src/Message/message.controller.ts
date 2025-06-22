@@ -12,9 +12,9 @@ export const MessageController ={
 		}
 		res.json(result);
     },
-    getMessageById: async function(req: Request, res: Response, next: NextFunction) {
+    getMessage: async function(req: Request, res: Response, next: NextFunction) {
         const id = req.params.id;
-		const result = await MessageService.getMessageById(+id)
+		const result = await MessageService.getMessage(+id)
 		if (result.status == "error") {
 			next(result);
 			return;
